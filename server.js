@@ -70,6 +70,6 @@ app.post('*', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Web Server listening on http://127.0.0.1:${PORT}`);
+  console.log(`Web Server listening on http://localhost:${PORT}`);
 });
 
