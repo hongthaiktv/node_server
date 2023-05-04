@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- MDBootstrap -->
+    <link rel="stylesheet" href="css/mdb-4.11.0.min.css">
+    <!-- Page Style -->
+    <link rel="stylesheet" href="css/style.css">
+    <title>Remote Develope Server Control</title>
+</head>
+<body>
+    <header>    
+        <!-- Background image -->
+        <div
+            class="p-5 text-center bg-image"
+            style="
+              background-image: url('image/Internet_of_Things_IoT_1600x900.jpg');
+              height: 200px;
+            "
+        >
+            <div class="d-flex justify-content-center align-items-center h-100">
+                <div class="text-white">
+                    <h1 class="mb-3 font-weight-bold">Remote Enviroment for Developer</h1>
+                    <h4 class="mb-3 font-italic font-weight-bolder">Learning on the go</h4>
+                    <a class="btn btn-outline-light btn-lg font-weight-bold" href="https://hongthaiktv.github.io/" role="button"
+                    >Github Page</a
+                    >
+                </div>
+            </div>
+        </div>
+        <!-- Background image -->
+    </header>
+
+    <div class="container mt-5">
+        <!-- Section: Block Content -->
+        <section class="">
+      
+          <!--Grid row-->
+          <div class="row">
+      
+            <!--Grid column-->
+            <div class="col-lg-4 col-md-12 mb-4">
+      
+              <!-- Admin card -->
+              <div class="card mt-3">
+      
+                <div class="">
+                    <i class="fas fa-globe-americas fa-lg primary-color z-depth-2 p-4 ml-3 mt-n3 rounded text-white"></i>                  <div class="float-right text-right p-3">
+                    <p class="text-uppercase text-muted mb-1"><small>SSH Server</small></p>
+                    <h4 id="sshdUpTime" class="font-weight-bold mb-0">0</h4>
+                  </div>
+                </div>
+      
+                <div class="card-body pt-0">
+                  <div class="progress md-progress">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <p class="card-text">Total running time of this month</p>
+                </div>
+      
+              </div>
+              <!-- Admin card -->
+      
+            </div>
+            <!--Grid column-->
+      
+            <!--Grid column-->
+            <div class="col-lg-4 col-md-6 mb-4">
+      
+              <!-- Admin card -->
+              <div class="card mt-3">
+      
+                <div class="">
+                  <i class="fas fa-code fa-lg teal z-depth-2 p-4 ml-3 mt-n3 rounded text-white"></i>
+                  <div class="float-right text-right p-3">
+                    <p class="text-uppercase text-muted mb-1"><small>VSCode Server</small></p>
+                    <h4 class="font-weight-bold mb-0">0</h4>
+                  </div>
+                </div>
+      
+                <div class="card-body pt-0">
+                  <div class="progress md-progress">
+                    <div class="progress-bar bg-danger" role="progressbar" style="width: 46%" aria-valuenow="46" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <p class="card-text">Total running time of this month</p>
+                </div>
+      
+              </div>
+              <!-- Admin card -->
+      
+            </div>
+            <!--Grid column-->
+      
+            <!--Grid column-->
+            <div class="col-lg-4 col-md-6 mb-4">
+      
+              <!-- Admin card -->
+              <div class="card mt-3">
+      
+                <div class="">
+                  <i class="fas fa-database fa-lg purple z-depth-2 p-4 ml-3 mt-n3 rounded text-white"></i>
+                  <div class="float-right text-right p-3">
+                    <p class="text-uppercase text-muted mb-1"><small>SQL Server</small></p>
+                    <h4 class="font-weight-bold mb-0">0</h4>
+                  </div>
+                </div>
+      
+                <div class="card-body pt-0">
+                  <div class="progress md-progress">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 31%" aria-valuenow="31" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <p class="card-text">Total running time of this month</p>
+                </div>
+      
+              </div>
+              <!-- Admin card -->
+      
+            </div>
+            <!--Grid column-->
+      
+          </div>
+          <!--Grid row-->
+      
+        </section>
+        <!--Section: Content-->
+      
+      
+    </div>
+
+
+    <!-- Key Input -->
+    <!-- Material outline input with prefix-->    
+    <div class="d-flex flex-column align-items-center">
+        <div class="md-form md-outline w-75">
+            <i class="fas fa-lock prefix"></i>
+            <input type="password" id="inpKey" class="form-control" length="1000">
+            <label for="inpKey">Enter security key</label>
+            <small id="inpKeyHelp" class="form-text text-muted"></small>
+        </div>   
+        <button id="btnSubmit" class="btn btn-primary rounded-lg"><i class="fas fa-paper-plane mr-2"></i> Submit</button>
+    </div>
+    
+    <div class="d-flex justify-content-center">
+        <div class="d-flex flex-wrap mt-5 mb-3">
+            <div class="switch">
+              <label class="d-flex flex-row align-items-center">
+                <input type="checkbox">
+                <span class="lever"></span> SSH Server
+              </label>
+            </div>
+    
+            <div class="switch">
+              <label>
+                <input type="checkbox">
+                <span class="lever"></span> VSCode Server
+              </label>
+            </div>
+    
+            <div class="switch">
+              <label>
+                <input type="checkbox">
+                <span class="lever"></span> SQL Server
+              </label>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/mdb-4.11.0.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
