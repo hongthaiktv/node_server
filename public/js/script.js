@@ -14,6 +14,31 @@ $.ajaxSetup({contentType: "application/json",
 var TOKEN = "";
 let data = {name: "value"};
 
+
+const text =
+  "An obscure body in the S-K System, your majesty. The inhabitants refer to it as the planet Earth.";
+
+async function digestMessage(message) {
+  const msgUint8 = new TextEncoder().encode(message); // encode as (utf-8) Uint8Array
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8); // hash the message
+  const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
+  const hashHex = hashArray
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join(""); // convert bytes to hex string
+  return hashHex;
+}
+
+
+
+
+async function hashPassword(password) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  toastr.info(hash.toString());
+  return hash;
+}
+
 setInterval(() => {
     $.post("http://localhost:3000/test", JSON.stringify(data),
     function (data) {
@@ -26,6 +51,8 @@ $('#btnSubmit').click(function (e) {
     let inpCmd = $('#inpKey').val();
     let cmdObj = {};
 
+    //hashPassword(inpCmd);
+    digestMessage(inpCmd).then((digestHex) => toastr.info(digestHex));
     if (TOKEN === "") cmdObj.token = inpCmd;
     else {
         cmdObj.token = TOKEN;

@@ -2,10 +2,11 @@ const { spawn, exec } = require('child_process');
 const fs = require('fs');
 const express = require('express');
 const path = require('path');
+const os = require('os');
 const PORT = process.env.PORT || 3000;
 const sshdPort = 2200;
 const sshdLogFile = path.join(__dirname, 'log', 'sshd.log');
-const sshdPIDFile = path.join(__dirname, 'log', 'sshd_pid');
+const sshdPIDFile = path.join(__dirname, 'log', 'sshd.pid');
 const sshdIO = fs.openSync(sshdLogFile, 'a');
 const APPLOG = fs.openSync(path.join(__dirname, 'log', 'app.log'), 'a');
 const app = express();
@@ -14,8 +15,9 @@ const pubRoot = path.join(__dirname, "public");
 
 const TOKEN = "123";
 
+const sshdExec = os.platform() === 'win32' ? "C:\\WINDOWS\\System32\\OpenSSH\\sshd.exe" : "sshd";
 
-const subprocess = spawn('C:\\WINDOWS\\System32\\OpenSSH\\sshd.exe', ['-p', sshdPort], {
+const subprocess = spawn(sshdExec, ['-p', sshdPort], {
   detached: true,
   windowsHide: true,
   stdio: [ 'ignore', sshdIO, sshdIO ]
