@@ -44,7 +44,8 @@ $('#btnSubmit').click(async function (e) {
             cmdObj.token = TOKEN;
             cmdObj.command = inpCmd;
         }
-        $.post(`https://remote.cyclic.app/run`, JSON.stringify(cmdObj),
+	
+        $.post(`${window.location.href}run`, JSON.stringify(cmdObj),
         function (data) {
             if (TOKEN === "") {
                 TOKEN = cmdObj.token;
