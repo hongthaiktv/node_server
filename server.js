@@ -8,10 +8,10 @@ const multer = require('multer');
 
 const PORT = process.env.PORT || 3000;
 const sshdPort = 2200;
-const sshdLogFile = path.join(__dirname, 'log', 'sshd.log');
-const sshdPIDFile = path.join(__dirname, 'log', 'sshd.pid');
-const sshdIO = fs.openSync(sshdLogFile, 'a');
-const APPLOG = fs.openSync(path.join(__dirname, 'log', 'app.log'), 'a');
+//const sshdLogFile = path.join(__dirname, 'log', 'sshd.log');
+//const sshdPIDFile = path.join(__dirname, 'log', 'sshd.pid');
+//const sshdIO = fs.openSync(sshdLogFile, 'a');
+//const APPLOG = fs.openSync(path.join(__dirname, 'log', 'app.log'), 'a');
 const app = express();
 const pubRoot = path.join(__dirname, "public");
 const APPSETTING = {};
@@ -26,7 +26,7 @@ console.log(APPSETTING.startTime);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/')
+    cb(null, 'upload/')
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname)
