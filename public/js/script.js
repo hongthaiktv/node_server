@@ -12,15 +12,11 @@ $.ajaxSetup({contentType: "application/json",
 });
 
 var TOKEN = "";
-let data = {name: "value"};
 
 
-const text =
-  "An obscure body in the S-K System, your majesty. The inhabitants refer to it as the planet Earth.";
-
-async function digestMessage(message) {
-  const msgUint8 = new TextEncoder().encode(message); // encode as (utf-8) Uint8Array
-  const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8); // hash the message
+async function hashPassword(password) {
+  const encUint8 = new TextEncoder().encode(password); // encode as (utf-8) Uint8Array
+  const hashBuffer = await crypto.subtle.digest("SHA-256", encUint8); // hash the message
   const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
   const hashHex = hashArray
     .map((b) => b.toString(16).padStart(2, "0"))
@@ -28,48 +24,42 @@ async function digestMessage(message) {
   return hashHex;
 }
 
-
-
-
-async function hashPassword(password) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hash = await crypto.subtle.digest('SHA-256', data);
-  toastr.info(hash.toString());
-  return hash;
-}
-
 setInterval(() => {
-    $.post("http://localhost:3000/test", JSON.stringify(data),
+    $.post("http://localhost:3000/test",
     function (data) {
         $('#sshdUpTime').html(data.counter);
     });
 }, 1000);
 
-$('#btnSubmit').click(function (e) { 
+$('#btnSubmit').click(async function (e) { 
     e.preventDefault();
     let inpCmd = $('#inpKey').val();
     let cmdObj = {};
 
-    //hashPassword(inpCmd);
-    digestMessage(inpCmd).then((digestHex) => toastr.info(digestHex));
-    if (TOKEN === "") cmdObj.token = inpCmd;
-    else {
-        cmdObj.token = TOKEN;
-        cmdObj.command = inpCmd;
-    }
-
-    $.post(`http://localhost:3000/run`, JSON.stringify(cmdObj),
-    function (data) {
+    if (inpCmd) {
         if (TOKEN === "") {
-            TOKEN = inpCmd;
-            $("#inpKey").attr("type", "text").prev().removeClass("fa-lock").addClass("fa-keyboard").siblings("label").html("Enter your command");
-            $("#inpKey").val("").blur();
-            console.log(data.message);
+            cmdObj.token = await hashPassword(inpCmd);
+            cmdObj.reqLogin = true;
         } else {
-            console.log(data.stdout);
-            toastr.success(data.message);
+            cmdObj.token = TOKEN;
+            cmdObj.command = inpCmd;
         }
-    });
+        $.post(`http://localhost:3000/run`, JSON.stringify(cmdObj),
+        function (data) {
+            if (TOKEN === "") {
+                TOKEN = cmdObj.token;
+                $("#inpKey").attr("type", "text").prev().removeClass("fa-lock").addClass("fa-keyboard").siblings("label").html("Enter your command");
+                $("#inpKey").val("").blur();
+                $('#console-log').html(`<div>${data.message}</div>`);
+            } else {
+                let oldLog = $('#console-log').html();
+                let newLog = data.stdout ? oldLog ? $('#console-log').html() + `<div>${data.stdout}</div>` : `<div>${data.stdout}</div>` : "";
+                if (newLog) {
+                    $('#console-log').html(newLog);
+                    $('#console-log').scrollTop($('#console-log')[0].scrollHeight);
+                }
+            }
+        });
+    }
 });
 

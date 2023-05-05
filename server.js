@@ -12,18 +12,16 @@ const sshdIO = fs.openSync(sshdLogFile, 'a');
 const APPLOG = fs.openSync(path.join(__dirname, 'log', 'app.log'), 'a');
 const app = express();
 const pubRoot = path.join(__dirname, "public");
+const APPSETTING = {};
 
+const TOKEN = "b3282a2f2a28757b3a18ab833de16a9c54518c0b0cf493e3f0a7cf09386f326a";
+APPSETTING.startTime = new Date().toString();
+console.log(APPSETTING.startTime);
 
-const TOKEN = "123";
+//crypto.randomBytes(256).toString('base64');
 
-  
-crypto.randomBytes(256, (err, buf) => {
-  if (err) throw err;
-  console.log(`${buf.length} bytes of random data: ${buf.toString('hex')}`);
-});
 
 const sshdExec = os.platform() === 'win32' ? "C:\\WINDOWS\\System32\\OpenSSH\\sshd.exe" : "sshd";
-
 const subprocess = spawn(sshdExec, ['-p', sshdPort], {
   detached: true,
   windowsHide: true,
@@ -54,17 +52,29 @@ app.post('/run', (req, res) => {
           res.status(400).send({error: "Please check your command and run again."});
         } else if (stderr) {
             console.error("StdErr:", stderr);
-            res.status(400).send({error: "Please check your command and run again."});
+            res.status(400).send({stderr: stderr});
           } else {
+              let result = stdout ? stdout : "";
               console.log("Run command:", req.body.command);  
               res.send({
                 message: "Your command run successfully.",
-                stdout: stdout
+                stdout: result
               });
             }
       });
-    } else res.send({message: "Token verify OK."});
-  } else res.status(401).send({error: "Security key not match."});
+    } else if (!req.body.reqLogin) {
+        console.error("Someone try to request by token with no command.");
+        res.status(400).send({error: "Don't try to send wrong request."});
+    } else {
+      APPSETTING.session = new Date().toString();
+      console.log("User login success.");
+      console.log("Session:", APPSETTING.session);
+      res.send({message: "Identity verify OK."});
+    }
+  } else {
+      console.error("User attempt to login failed.");
+      res.status(401).send({error: "Security key not match."});
+  }
 });
 
 app.post('/reset', (req, res) => {
