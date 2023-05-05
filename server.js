@@ -3,6 +3,7 @@ const fs = require('fs');
 const express = require('express');
 const path = require('path');
 const os = require('os');
+const crypto = require('crypto');
 const PORT = process.env.PORT || 3000;
 const sshdPort = 2200;
 const sshdLogFile = path.join(__dirname, 'log', 'sshd.log');
@@ -14,6 +15,12 @@ const pubRoot = path.join(__dirname, "public");
 
 
 const TOKEN = "123";
+
+  
+crypto.randomBytes(256, (err, buf) => {
+  if (err) throw err;
+  console.log(`${buf.length} bytes of random data: ${buf.toString('hex')}`);
+});
 
 const sshdExec = os.platform() === 'win32' ? "C:\\WINDOWS\\System32\\OpenSSH\\sshd.exe" : "sshd";
 
