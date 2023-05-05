@@ -4,6 +4,8 @@ const express = require('express');
 const path = require('path');
 const os = require('os');
 const crypto = require('crypto');
+const multer = require('multer');
+
 const PORT = process.env.PORT || 3000;
 const sshdPort = 2200;
 const sshdLogFile = path.join(__dirname, 'log', 'sshd.log');
@@ -21,6 +23,26 @@ console.log(APPSETTING.startTime);
 //crypto.randomBytes(256).toString('base64');
 
 
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname)
+  }
+});
+
+const upload = multer({ storage: storage });
+
+app.post('/upload', upload.single('file'), function (req, res, next) {
+  // req.file is the `file` file
+  // req.body will hold the text fields, if there were any
+});
+
+
+
+/*
 const sshdExec = os.platform() === 'win32' ? "C:\\WINDOWS\\System32\\OpenSSH\\sshd.exe" : "sshd";
 const subprocess = spawn(sshdExec, ['-p', sshdPort], {
   detached: true,
@@ -30,7 +52,7 @@ const subprocess = spawn(sshdExec, ['-p', sshdPort], {
 fs.writeFileSync(sshdPIDFile, subprocess.pid.toString());
 console.log('SSH Server process ID:', subprocess.pid, 'on port:', sshdPort);
 subprocess.unref();
-
+*/
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -63,7 +85,7 @@ app.post('/run', (req, res) => {
             }
       });
     } else if (!req.body.reqLogin) {
-        console.error("Someone try to request by token with no command.");
+        console.error("Someone trying to request by token with no command.");
         res.status(400).send({error: "Don't try to send wrong request."});
     } else {
       APPSETTING.session = new Date().toString();
