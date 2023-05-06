@@ -16,7 +16,11 @@ const sshdPort = 2200;
 //const APPLOG = fs.openSync(path.join(__dirname, 'log', 'app.log'), 'a');
 const app = express();
 const pubRoot = path.join(__dirname, "public");
-const APPSETTING = {};
+const APPSETTING = {
+    ssh: {},
+    vscode: {},
+    sql: {}
+};
 
 const TOKEN = "b3282a2f2a28757b3a18ab833de16a9c54518c0b0cf493e3f0a7cf09386f326a";
 APPSETTING.startTime = new Date().toString();
@@ -55,18 +59,20 @@ subprocess.unref();
 */
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 app.use(express.static(pubRoot));
 
 var COUNTER = 0;
 
-function startServer(server) {
+function startServer(server, option) {
   switch (server) {
     case 'ssh':
-      APPSETTING.ssh = {upTime: 0};
+      option = {pid: 1234, port: 5678};
+      APPSETTING.ssh.upTime = 0;
+      APPSETTING.ssh.startTime = new Date().toString();
       setInterval(() => {
         APPSETTING.ssh.upTime++;
-      }, 60000);
+      }, 1000);
+      console.log('SSH Server process ID:', option.pid, 'on port:', option.port);  
       break;
   
     default:

@@ -40,6 +40,10 @@ async function hashPassword(password) {
   return hashHex;
 }
 
+$.post(APPSETTING.domain, function (data) {
+	$('#sshdUpTime').html(data[0].upTime);
+});
+
 setInterval(() => {
     $.post(APPSETTING.domain,
     function (data) {
@@ -68,6 +72,8 @@ $('#btnSubmit').click(async function (e) {
                 Object.freeze(APPSETTING);
                 $("#inpKey").attr("type", "text").prev().removeClass("fa-lock").addClass("fa-keyboard").siblings("label").html("Enter your command");
                 $("#inpKey").val("").blur();
+		$('#inpKeyHelp').html('Ex: ./bin/curl --cacert ./certs/ca-certificates.crt https://example.com -o /tmp/example.html');
+		$('#btnSubmit').html('<i class="fas fa-running mr-2"></i> Run');
                 $('#console-log').append(`<div class="success-color-dark">${data.message}</div>`);
             } else {
                 $('#console-log').append(`<div>---------- ${new Date().toLocaleString()} ----------<br>${data.stdout}</div>`);
