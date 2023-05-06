@@ -1,3 +1,5 @@
+"use strict";
+
 const { spawn, exec } = require('child_process');
 const fs = require('fs');
 const express = require('express');
@@ -23,7 +25,6 @@ console.log(APPSETTING.startTime);
 //crypto.randomBytes(256).toString('base64');
 
 
-
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'upload/')
@@ -39,7 +40,6 @@ app.post('/upload', upload.single('file'), function (req, res, next) {
   // req.file is the `file` file
   // req.body will hold the text fields, if there were any
 });
-
 
 
 /*
@@ -60,9 +60,24 @@ app.use(express.static(pubRoot));
 
 var COUNTER = 0;
 
-app.post('/test', (req, res) => {
-    COUNTER++;
-    res.send({counter: COUNTER});
+function startServer(server) {
+  switch (server) {
+    case 'ssh':
+      APPSETTING.ssh = {upTime: 0};
+      setInterval(() => {
+        APPSETTING.ssh.upTime++;
+      }, 60000);
+      break;
+  
+    default:
+      break;
+  }
+}
+
+startServer('ssh');
+
+app.post('/', (req, res) => {
+    res.send([APPSETTING.ssh]);
 });
 
 app.post('/run', (req, res) => {
@@ -71,10 +86,16 @@ app.post('/run', (req, res) => {
       exec(req.body.command, (err, stdout, stderr) => {
         if (err) {
           console.error("Command Error:", err);
-          res.status(400).send({error: "Please check your command and run again."});
+          res.status(400).send({
+            message: "Please check your command and run again.",
+            error: err
+          });
         } else if (stderr) {
             console.error("StdErr:", stderr);
-            res.status(400).send({stderr: stderr});
+            res.status(400).send({
+              message: "Please check your command and run again.",
+              error: stderr
+            });
           } else {
               let result = stdout ? stdout : "";
               console.log("Run command:", req.body.command);  

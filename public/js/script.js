@@ -1,17 +1,33 @@
+"use strict";
+
 $.ajaxSetup({contentType: "application/json",
     error: (xhr) => {
         try {
             let errObj = JSON.parse(xhr.responseText);
-            toastr.error(errObj.error);
-            console.error("JQuery Ajax:", errObj.error);
+            toastr.error(errObj.message);
+            if (errObj.error && errObj.error.code && errObj.error.cmd) {
+                console.error("JQuery Ajax: Error code:", errObj.error.code + ",", "Command:", errObj.error.cmd);
+                $('#console-log').append(`<div class="danger-color-dark">Error code: ${errObj.error.code}, Command: ${errObj.error.cmd}</div>`);
+            } else {
+                console.error("JQuery Ajax: Error code:", errObj.error);
+                $('#console-log').append(`<div class="danger-color-dark">${errObj.error}</div>`);
+            }
+            $("#inpKey").val("");
+            $('#console-log').scrollTop($('#console-log')[0].scrollHeight);
         } catch (error) {
             console.error("JQuery Ajax:", "Can't parse error, not json type.");
             console.error("JQuery Ajax:", xhr.responseText);
+            $('#console-log').append(`<div class="danger-color-dark">${xhr.responseText}</div>`);
+            $("#inpKey").val("");
+            $('#console-log').scrollTop($('#console-log')[0].scrollHeight);
         }
     }
 });
 
-var TOKEN = "";
+const APPSETTING = {
+    domain: window.location.href,
+    token: ""
+};
 
 
 async function hashPassword(password) {
@@ -25,11 +41,11 @@ async function hashPassword(password) {
 }
 
 setInterval(() => {
-    $.post("http://localhost:3000/test",
+    $.post(APPSETTING.domain,
     function (data) {
-        $('#sshdUpTime').html(data.counter);
+        $('#sshdUpTime').html(data[0].upTime);
     });
-}, 1000);
+}, 60000);
 
 $('#btnSubmit').click(async function (e) { 
     e.preventDefault();
@@ -37,30 +53,32 @@ $('#btnSubmit').click(async function (e) {
     let cmdObj = {};
 
     if (inpCmd) {
-        if (TOKEN === "") {
+        if (APPSETTING.token === "") {
             cmdObj.token = await hashPassword(inpCmd);
             cmdObj.reqLogin = true;
         } else {
-            cmdObj.token = TOKEN;
+            cmdObj.token = APPSETTING.token;
             cmdObj.command = inpCmd;
         }
 	
-        $.post(`${window.location.href}run`, JSON.stringify(cmdObj),
+        $.post(`${APPSETTING.domain}run`, JSON.stringify(cmdObj),
         function (data) {
-            if (TOKEN === "") {
-                TOKEN = cmdObj.token;
+            if (APPSETTING.token === "") {
+                APPSETTING.token = cmdObj.token;
+                Object.freeze(APPSETTING);
                 $("#inpKey").attr("type", "text").prev().removeClass("fa-lock").addClass("fa-keyboard").siblings("label").html("Enter your command");
                 $("#inpKey").val("").blur();
-                $('#console-log').html(`<div>${data.message}</div>`);
+                $('#console-log').append(`<div class="success-color-dark">${data.message}</div>`);
             } else {
-                let oldLog = $('#console-log').html();
-                let newLog = data.stdout ? oldLog ? $('#console-log').html() + `<div>${data.stdout}</div>` : `<div>${data.stdout}</div>` : "";
-                if (newLog) {
-                    $('#console-log').html(newLog);
-                    $('#console-log').scrollTop($('#console-log')[0].scrollHeight);
-                }
+                $('#console-log').append(`<div>---------- ${new Date().toLocaleString()} ----------<br>${data.stdout}</div>`);
+                $('#console-log').scrollTop($('#console-log')[0].scrollHeight);
+                $("#inpKey").val("");
             }
         });
     }
+});
+
+$('#inpKey').keydown(function (e) {
+    if (e.code === 'Enter') $('#btnSubmit').click();
 });
 
