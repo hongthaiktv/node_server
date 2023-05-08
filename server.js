@@ -27,7 +27,8 @@ APPSETTING.startTime = new Date().toString();
 console.log(APPSETTING.startTime);
 
 //crypto.randomBytes(256).toString('base64');
-
+process.env.PATH = process.env.PATH + ':' + path.join(__dirname, 'bin');
+process.env.CURL_CA_BUNDLE = path.join(__dirname, 'certs', 'ca-certificates.crt');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
