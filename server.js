@@ -92,24 +92,23 @@ app.post('/run', (req, res) => {
   if (req.body.token === TOKEN) {
     if (req.body.command) {
       exec(req.body.command, (err, stdout, stderr) => {
-        if (err) {
-          console.error("Command Error:", err);
+        if (stderr) {
+          console.error("StdErr:", stderr);
           res.status(400).send({
             message: "Please check your command and run again.",
-            error: err
+            error: stderr
           });
-        } else if (stderr) {
-            console.error("StdErr:", stderr);
+        } else if (err) {
+            console.error("Command Error:", err);
             res.status(400).send({
               message: "Please check your command and run again.",
-              error: stderr
+              error: err
             });
           } else {
-              let result = stdout ? stdout : "";
               console.log("Run command:", req.body.command);  
               res.send({
                 message: "Your command run successfully.",
-                stdout: result
+                stdout: stdout
               });
             }
       });
@@ -124,7 +123,10 @@ app.post('/run', (req, res) => {
     }
   } else {
       console.error("User attempt to login failed.");
-      res.status(401).send({error: "Security key not match."});
+      res.status(401).send({
+        message: "Can't verify your identity.",
+        error: "Security key not match."
+      });
   }
 });
 
