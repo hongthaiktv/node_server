@@ -25,7 +25,6 @@ $.ajaxSetup({contentType: "application/json",
 });
 
 const APPSETTING = {
-    domain: window.location.href,
     token: ""
 };
 
@@ -40,12 +39,12 @@ async function hashPassword(password) {
   return hashHex;
 }
 
-$.post(APPSETTING.domain, function (data) {
+$.post("/", function (data) {
 	$('#sshdUpTime').html(data[0].upTime);
 });
 
 setInterval(() => {
-    $.post(APPSETTING.domain,
+    $.post("/",
     function (data) {
         $('#sshdUpTime').html(data[0].upTime);
     });
@@ -65,7 +64,7 @@ $('#btnSubmit').click(async function (e) {
             cmdObj.command = inpCmd;
         }
 	
-        $.post(`${APPSETTING.domain}run`, JSON.stringify(cmdObj),
+        $.post("/run", JSON.stringify(cmdObj),
         function (data) {
             if (APPSETTING.token === "") {
                 APPSETTING.token = cmdObj.token;
